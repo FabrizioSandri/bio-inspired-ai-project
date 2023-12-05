@@ -1,19 +1,27 @@
+import torch
+import numpy as np
+from dataset import WeatherData
+
 class GeneticAlgorithms():
   """
   Implementation of Genetic Algorithms
   """
 
-  def __init__(self, pop_size, device):
+  def __init__(self, pop_size, train_data, val_data, device):
     """
     Instantiate Genetic Algorithms with an initial population
 
     Parameters
     ----------
     pop_size : the population size
+    train_data : the training data Pandas DataFrame
+    val_data : the validation data Pandas DataFrame
     device : either 'cpu' or 'gpu'
     """
     self.population = self.initial_pop_generator(pop_size)
     self.device = device
+    self.train_data = train_data
+    self.val_data = val_data
 
 
   def initial_pop_generator(self, pop_size):
@@ -139,8 +147,8 @@ class GeneticAlgorithms():
     # Prepare the dataset and the associated DataLoader using the given
     # candidate sequence length
     seq_len = candidate[0]
-    train_dataset = WeatherData(train_data, seq_len=seq_len, filter_cols=["outTemp"] + candidate[4])
-    val_dataset = WeatherData(val_data, seq_len=seq_len, filter_cols=["outTemp"] + candidate[4])
+    train_dataset = WeatherData(self.train_data, seq_len=seq_len, filter_cols=["outTemp"] + candidate[4])
+    val_dataset = WeatherData(self.val_data, seq_len=seq_len, filter_cols=["outTemp"] + candidate[4])
 
     train_loader = DataLoader(train_dataset, shuffle=True, batch_size=256)
     val_loader = DataLoader(val_dataset, shuffle=False, batch_size=256)
