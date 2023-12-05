@@ -1,6 +1,9 @@
 import torch
 import numpy as np
-from dataset import WeatherData
+from torch.utils.data import DataLoader
+
+from src.dataset import WeatherData
+from src.weather_lstm import WeatherLSTM
 
 class GeneticAlgorithms():
   """
@@ -147,14 +150,14 @@ class GeneticAlgorithms():
     # Prepare the dataset and the associated DataLoader using the given
     # candidate sequence length
     seq_len = candidate[0]
-    train_dataset = WeatherData(self.train_data, seq_len=seq_len, filter_cols=["outTemp"] + candidate[4])
-    val_dataset = WeatherData(self.val_data, seq_len=seq_len, filter_cols=["outTemp"] + candidate[4])
+    train_dataset = WeatherData(self.train_data, seq_len=seq_len, filter_cols=["outTemp"] + candidate[4], device=self.device)
+    val_dataset = WeatherData(self.val_data, seq_len=seq_len, filter_cols=["outTemp"] + candidate[4], device=self.device)
 
     train_loader = DataLoader(train_dataset, shuffle=True, batch_size=256)
     val_loader = DataLoader(val_dataset, shuffle=False, batch_size=256)
 
     # Train the model and return its loss as the fitness
-    _, loss = train_model(
+    _, loss = self.train_model(
                           hidden_size=candidate[1],
                           num_layers=candidate[2],
                           learning_rate=candidate[3],
@@ -353,7 +356,7 @@ class GeneticAlgorithms():
 
       # Evaluate the fitness of each individual in the current population
       for candidate in self.population:
-        loss = fitness_function(candidate, num_epochs=num_epochs)
+        loss = self.fitness_function(candidate, num_epochs=num_epochs)
         fitness.append(loss)
 
       # Track the avg, best and worst metrics of fitness
@@ -371,22 +374,22 @@ class GeneticAlgorithms():
         final_pop = self.population
         final_fit = fitness
 
-      elite_individuals = elitism(copy.deepcopy(self.population), fitness, num_elites)
+      elite_individuals = self.elitism(copy.deepcopy(self.population), fitness, num_elites)
 
       # Parent selection based on tournament selection
-      parents_idx = tournament_selection(fitness, K=3, num_tournaments=len(self.population) - num_elites, maximize=maximize)
+      parents_idx = self.tournament_selection(fitness, K=3, num_tournaments=len(self.population) - num_elites, maximize=maximize)
       parents = [self.population[i] for i in parents_idx]
 
       # Apply crossover with probability 'crossover_prob'
       for i in range(len(parents)):
         if np.random.rand() < crossover_prob:
           j = np.random.randint(0, len(parents))  # second random individual from the population for crossover
-          parents[i] = crossover(parents[i], parents[j])
+          parents[i] = self.crossover(parents[i], parents[j])
           
       # Apply mutation with probability 'mutation_prob'
       for i in range(len(parents)):
         if np.random.rand() < mutation_prob:
-          parents[i] = mutation(parents[i], mutation_std_dev)
+          parents[i] = self.mutation(parents[i], mutation_std_dev)
 
       # Survivor selection based on elitism
       self.population = elite_individuals + parents

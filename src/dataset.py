@@ -24,7 +24,7 @@ class WeatherData(Dataset):
     filtered_data = torch.tensor(data.loc[:,filter_cols].values, device=device)
     
     self.device = device
-    self.X_data, self.Y_data = self.prepare_dataset(filtered_data, seq_len, filter_cols)
+    self.X_data, self.Y_data = self.prepare_dataset(filtered_data, seq_len)
 
   def prepare_dataset(self, data, seq_len):
     """
@@ -37,7 +37,7 @@ class WeatherData(Dataset):
     seq_len : the length of the sequence corresponding to the number of prior 
       weather samples used for prediction.
     """
-    X = torch.zeros((data.shape[0] - seq_len, seq_len, len(data.columns)), device=self.device)
+    X = torch.zeros((data.shape[0] - seq_len, seq_len, data.size(1)), device=self.device)
     Y = []
 
     # Prepare the sequences of length seq_len
