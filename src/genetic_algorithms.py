@@ -188,8 +188,8 @@ class GeneticAlgorithms():
     train_dataset = WeatherData(self.train_data, seq_len=seq_len, filter_cols=["outTemp"] + candidate[4], device=self.device)
     val_dataset = WeatherData(self.val_data, seq_len=seq_len, filter_cols=["outTemp"] + candidate[4], device=self.device)
 
-    train_loader = DataLoader(train_dataset, shuffle=True, batch_size=128)
-    val_loader = DataLoader(val_dataset, shuffle=False, batch_size=128)
+    train_loader = DataLoader(train_dataset, shuffle=True, batch_size=256)
+    val_loader = DataLoader(val_dataset, shuffle=False, batch_size=256)
 
     # Train the model and return it
     model, _ = self.train_model(
@@ -385,6 +385,8 @@ class GeneticAlgorithms():
     }
 
     random.seed(seed)
+    np.random.seed(seed)
+    
     # Run until the stopping criterion is met
     for gen_i in range(num_generations):
       fitness = []
