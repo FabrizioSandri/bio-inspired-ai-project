@@ -354,7 +354,7 @@ class GeneticAlgorithms():
 
 
   def run(self, num_generations, num_elites, crossover_prob, mutation_prob, 
-          mutation_std_dev, maximize=False, num_epochs=15):
+          mutation_std_dev, maximize=False, num_epochs=15, seed=0):
     """
     Runs genetic algorithm for the predefined number of generations
     'num_generations'.
@@ -372,6 +372,7 @@ class GeneticAlgorithms():
       mutations.
     maximize : specify whether the problem is a maximization problem or not
     num_epochs : number of epochs to train the model
+    seed : seed for reproducibility
     """
 
     # Track of the population at each generation
@@ -383,6 +384,7 @@ class GeneticAlgorithms():
       "worst": []
     }
 
+    random.seed(seed)
     # Run until the stopping criterion is met
     for gen_i in range(num_generations):
       fitness = []
