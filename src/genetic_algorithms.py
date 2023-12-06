@@ -27,6 +27,7 @@ class GeneticAlgorithms():
     self.device = device
     self.train_data = train_data
     self.val_data = val_data
+    self.filter_cols = ["outTemp", "barometer", "dewpoint", "outHumidity", "windSpeed10"]
 
 
   def initial_pop_generator(self, pop_size):
@@ -124,7 +125,7 @@ class GeneticAlgorithms():
                 val_loss += torch.nn.functional.l1_loss(val_outputs, y, reduction='sum').item()
 
         average_val_loss = val_loss / (num_samples)
-        print(f'Validation - Epoch [{epoch+1}/{num_epochs}], Loss: {average_val_loss:.4f}')
+        # print(f'Validation - Epoch [{epoch+1}/{num_epochs}], Loss: {average_val_loss:.4f}')
 
         # Found a better model, save it
         if method=="best" and (best_val_loss == None or average_val_loss < best_val_loss): 
@@ -313,7 +314,7 @@ class GeneticAlgorithms():
           if len(mutated_individual[i]) > 0:
             del mutated_individual[i][np.random.randint(0, len(mutated_individual[i]))]
         elif rand < -1.0: # Add a new random extra variable
-          rand_extra_var = filter_cols[np.random.randint(1,len(filter_cols))]
+          rand_extra_var = self.filter_cols[np.random.randint(1,len(self.filter_cols))]
           if not rand_extra_var in mutated_individual[i]:
             mutated_individual[i].append(rand_extra_var)
         else: # No mutation
