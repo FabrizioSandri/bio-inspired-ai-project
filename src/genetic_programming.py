@@ -51,14 +51,16 @@ class GeneticProgramming():
 
     # Add one ephemeral constant 
     try:
-        self.pset.addEphemeralConstant("rand101", lambda: random.uniform(0,1))
+      def rand():
+        return random.uniform(0,1)
+      self.pset.addEphemeralConstant("rand101", rand)
     except:
-        print("EphemeralConstant is already defined, if you changed it restart the kernel")
+      print("EphemeralConstant is already defined, if you changed it restart the kernel")
     try:
-        del creator.FitnessMinSR
-        del creator.IndividualSR
+      del creator.FitnessMinSR
+      del creator.IndividualSR
     except:
-        pass
+      pass
     creator.create("FitnessMinSR", base.Fitness, weights=(-1.0,))
     creator.create("IndividualSR", gp.PrimitiveTree, fitness=creator.FitnessMinSR)
 
