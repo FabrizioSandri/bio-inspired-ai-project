@@ -1,4 +1,6 @@
 import torch
+import copy
+import random
 import numpy as np
 from torch.utils.data import DataLoader
 
@@ -168,6 +170,38 @@ class GeneticAlgorithms():
                           method="final"
                         )
     return loss
+
+  def get_model(self, candidate, num_epochs):
+    """
+    Returns the trained model associated with a certain candiate
+
+    Parameters
+    ----------
+    candidate : a list containing all the parameters of the candidate solution
+    num_epochs : number of epochs to train the model
+    """
+    
+    # Prepare the dataset and the associated DataLoader using the given
+    # candidate sequence length
+    seq_len = candidate[0]
+    train_dataset = WeatherData(self.train_data, seq_len=seq_len, filter_cols=["outTemp"] + candidate[4], device=self.device)
+    val_dataset = WeatherData(self.val_data, seq_len=seq_len, filter_cols=["outTemp"] + candidate[4], device=self.device)
+
+    train_loader = DataLoader(train_dataset, shuffle=True, batch_size=128)
+    val_loader = DataLoader(val_dataset, shuffle=False, batch_size=128)
+
+    # Train the model and return it
+    model, _ = self.train_model(
+                          hidden_size=candidate[1],
+                          num_layers=candidate[2],
+                          learning_rate=candidate[3],
+                          extra_params=candidate[4],
+                          train_loader=train_loader,
+                          val_loader=val_loader,
+                          num_epochs=num_epochs,
+                          method="final"
+                        )
+    return model
 
 
   def tournament_selection(self, candidates_fitness, num_tournaments, K=3, 
