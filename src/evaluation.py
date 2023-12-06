@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import torch
 
 class Evaluate():
   """
@@ -17,8 +18,8 @@ class Evaluate():
     ----------
     model : the model, in this case an instance of the WeatherLSTM class
     best_individual : the best individual found by the aforementioned model
-    dataset : torch tensor containing all the data of size (N,F) where N is the
-      number of samples and F is the number of weather features
+    dataset : Pandas dataframe containing all the data of size (N,F) where N is
+      the number of samples and F is the number of weather features
     plot : weather or not to plot the prediction compared to the baseline and
       the ground truth
     """
@@ -26,20 +27,23 @@ class Evaluate():
     curve_lstm = []     # LSTM prediction curve
     curve_last = []     # Prediction using the last temperature recorded(baseline)
 
+
+    data = torch.tensor(dataset.values, dtype=torch.float32, device=self.device)
+
     # Mean Absolute Error values
     mae_lstm = 0
     mae_last = 0
 
     starting_point = 100
     seq_len = best_individual[0]
-    for j in range(dataset.size(0) - starting_point):
+    for j in range(data.size(0) - starting_point):
       i = (starting_point - seq_len) + j
 
       # Filter the necessary columns and create a sequence
       filter_cols = ["outTemp", "barometer", "dewpoint", "outHumidity", "windSpeed10"]
       col_idx = [filter_cols.index(extra_par) for extra_par in (["outTemp"] + best_individual[4])]
-      x = dataset[i:i+seq_len, col_idx]
-      y = dataset[i+seq_len,0].item()
+      x = data[i:i+seq_len, col_idx]
+      y = data[i+seq_len,0].item()
 
       # Predict the temperature
       pred = model(x.unsqueeze(0))
