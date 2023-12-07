@@ -1,0 +1,17 @@
+\section{Experiments}
+
+The experiments are carried out using weather data from the year 2022 obtained from my personal weather station in northern Italy\cite{dataset}. The station records various weather parameters, including outdoor temperature, humidity, atmospheric pressure, wind speed, and dewpoint, at two-second intervals. Due to the substantial size of the dataset, approximately $5.5$ GB, the data is resampled. Specifically, the temperature recordings are aggregated to an hourly frequency, guided by the assumption that temperature changes within a few minutes are not characterized by abrupt fluctuations. This process reduces the dataset to approximately $9000$ samples. 
+
+The dataset is partitioned into three sets for training, validation, and testing purposes. During the hyperparameter tuning of the LSTM using Genetic Algorithms, the training set is employed for training the model through backpropagation by minimizing the error on the training set. The validation set is used to assess the model's generalization capabilities, and the accuracy metric based on the Mean Absolute Error is calculated on the validation set, serving as the fitness function for Genetic Algorithms. Finally, the test set is used to compare the three models.
+
+For the method involving Genetic Programming, the size of the training set is reduced to the first $100$ samples due to the impracticality of using the entire training set given the number of individuals in the population, which would require excessive time. The validation set is employed, similar to the other method, to measure the model's ability to generalize and select the model that exhibits better generalization without overfitting the training data.
+
+
+\subsection{Implementation}
+
+The implementation of both approaches discussed in this paper is implemented in Python and is publicly available on GitHub \cite{github-repo}. Specifically:
+\begin{itemize}
+    \item The Genetic Algorithms employed for hyperparameter tuning was developed from scratch leveraging PyTorch\cite{pytorch} as the backend for the deep learning part. PyTorch provides advanced tools for both automatic gradient tracking and backpropagation, along with a simple interface for implementing LSTM models.
+    \item For the Genetic Programming model, the DEAP\cite{deap} open-source library is utilized. It has been adapted to suit the specific requirements of this study. More precisely, the evolutionary algorithm governing genetic programming is modified to calculate the accuracy on the validation set at the conclusion of each generation. This change is crucial for evaluating the model's generalization capabilities.
+\end{itemize}
+

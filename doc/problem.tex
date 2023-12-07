@@ -1,0 +1,16 @@
+\section{Problem Statement}
+
+Consider a weather time series dataset represented as $\{x_1, x_2, \ldots, x_N\}$, where $N$ is the number of samples, and each $x_i$ is a set of relevant features recorded at timestep $i$. The goal is to develop a model that can estimate the outdoor temperature of the next hour based on historical observations. This can be formulated as the task of learning a function $f$ such that:
+
+\begin{equation}
+    \hat{y}_{t+1} = f(x_t, x_{t-1}, \ldots, x_{t-p+1})
+\end{equation}
+
+where $\hat{y}_{t+1}$ is the predicted value of the temperature at time $t+1$, $p$ is the number of prior samples used for prediction, and $x_t$ is the feature vector at time $t$.
+
+The objective is to find a model that minimizes the discrepancy between the predicted temperature value and the actual temperature. This discrepancy is quantified using the Mean Absolute Error:
+
+\begin{equation}
+\mathcal{L} = \frac{1}{N} \sum_{t=1}^{N} \vert y_t - \hat {y}_t \vert
+\end{equation}
+
