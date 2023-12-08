@@ -1,6 +1,6 @@
 # A Comparative Study of Genetic-Based Approaches for Enhanced Hourly Temperature Predictions
 
-[[Notebook]](/doc/report.pdf)
+[[Report]](/doc/report.pdf)
 
 
 Nowadays, time series forecasting is widely applied across various domains. However, addressing the challenges of time series forecasting proves difficult due to factors that extend beyond the data. In this context, approaches based on deep learning and metaheuristics emerge to confront the complexities of time series forecasting by harnessing the inherent data. This study examines two strategies for predicting the outdoor temperature in the upcoming hour: a deep learning model, optimized through Genetic Algorithms, and an interpretable alternative employing Genetic Programming. The analysis aims to compare the results attained through these differing methodologies.
